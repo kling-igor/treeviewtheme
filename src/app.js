@@ -3,10 +3,7 @@ import 'react-sortable-tree/style.css'
 import SortableTree from 'react-sortable-tree'
 
 import { GlobalStyle } from './style'
-
 import FileExplorerTheme from './filetheme'
-
-// import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer'
 
 export default class App extends PureComponent {
   state = {
@@ -58,32 +55,12 @@ export default class App extends PureComponent {
         <GlobalStyle />
         <div style={{ height: 900 }}>
           <SortableTree
+            scaffoldBlockPxWidth={16}
             theme={FileExplorerTheme}
             treeData={this.state.treeData}
             onChange={treeData => this.setState({ treeData })}
             canDrag={({ node }) => !node.dragDisabled}
             canDrop={({ nextParent }) => !nextParent || nextParent.isDirectory}
-            // canDrag={({
-            //   node,
-            //   path /*number[] or string[]*/,
-            //   treeIndex,
-            //   lowerSiblingCounts /*number[]*/,
-            //   isSearchMatch,
-            //   isSearchFocus
-            // }) => {
-            //   return true
-            // }}
-            // canDrop={({
-            //   node,
-            //   prevPath /*number[] or string[]*/,
-            //   prevParent,
-            //   prevTreeIndex,
-            //   nextPath /*number[] or string[]*/,
-            //   nextParent,
-            //   nextTreeIndex
-            // }) => {
-            //   return true
-            // }}
           />
         </div>
       </>

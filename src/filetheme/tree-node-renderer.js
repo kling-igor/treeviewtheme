@@ -29,7 +29,7 @@ export default class FileThemeTreeNodeRenderer extends Component {
     } = this.props
 
     return connectDropTarget(
-      <div {...otherProps} styles={style}>
+      <div {...otherProps} style={style}>
         {Children.map(children, child =>
           cloneElement(child, {
             isOver,

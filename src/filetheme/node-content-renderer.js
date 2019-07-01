@@ -24,9 +24,9 @@ const AbsoluteLineBlockStyle = styled(LineBlockStyle)`
   top: 0;
 `
 
-const ARROW_SIZE = '7'
+const ARROW_SIZE = 6
 const HIGHLIGHT_COLOR = '#36c2f6'
-const HIGHLIGHT_LINE_SIZE = '6' // Make it an even number for clean rendering
+const HIGHLIGHT_LINE_SIZE = 4 // Make it an even number for clean rendering
 
 const BORDER_STYLE = `solid ${HIGHLIGHT_LINE_SIZE}px ${HIGHLIGHT_COLOR}`
 
@@ -46,7 +46,7 @@ const HighlightBottomLeftCornerStyle = styled(AbsoluteLineBlockStyle)`
     border-bottom: ${BORDER_STYLE};
     border-left: ${BORDER_STYLE};
     box-sizing: border-box;
-    width: ${() => `calc(50% - ${ARROW_SIZE - HIGHLIGHT_LINE_SIZE / 2}px)`};
+    width: ${() => `calc(60% - ${ARROW_SIZE - HIGHLIGHT_LINE_SIZE / 2}px)`};
     height: ${() => `calc(100% + ${HIGHLIGHT_LINE_SIZE / 2}px)`};
     top: 0;
     right: ${`${ARROW_SIZE}px`};
@@ -80,7 +80,7 @@ const HighlightTopLeftCornerStyle = styled(AbsoluteLineBlockStyle)`
     border-top: ${BORDER_STYLE};
     border-left: ${BORDER_STYLE};
     box-sizing: border-box;
-    width: ${`calc(50% + ${HIGHLIGHT_LINE_SIZE / 2}px)`};
+    width: ${`calc(60% + ${HIGHLIGHT_LINE_SIZE / 2}px)`};
     height: ${`calc(50% + ${HIGHLIGHT_LINE_SIZE / 2}px)`};
     top: 50%;
     margin-top: ${`${HIGHLIGHT_LINE_SIZE / -2}px`};
@@ -104,12 +104,12 @@ const HighlightLineVerticalStyle = styled(AbsoluteLineBlockStyle)`
     background-color: ${HIGHLIGHT_COLOR};
     width: ${`${HIGHLIGHT_LINE_SIZE}px`};
     margin-left: ${`${HIGHLIGHT_LINE_SIZE / -2}px`};
-    left: 50%;
+    left: 40%;
     top: 0;
     height: 100%;
   }
 
-  @keyframes arrow-pulse {
+  /* @keyframes arrow-pulse {
     0% {
       transform: translate(0, 0);
       opacity: 0;
@@ -133,79 +133,14 @@ const HighlightLineVerticalStyle = styled(AbsoluteLineBlockStyle)`
     position: absolute;
     height: 0;
     margin-left: ${`${-HIGHLIGHT_LINE_SIZE / 2}px`};
-    left: 50%;
+    left: 40%;
     top: 0;
     border-left: ${`${HIGHLIGHT_LINE_SIZE / 2}px solid transparent`};
     border-right: ${`${HIGHLIGHT_LINE_SIZE / 2}px solid transparent`};
     border-top: ${`${HIGHLIGHT_LINE_SIZE / 2}px solid white`};
     animation: arrow-pulse 1s infinite linear both;
-  }
+  } */
 `
-
-const NodeArrowStyle = styled.span`
-  /* padding: 0; */
-  z-index: 2;
-  /* position: absolute; */
-  /* top: 45%; */
-  /* width: 30px; */
-  width: 20px;
-  background-color: green;
-
-  /* color: ${({ theme: { type } }) => (type === 'dark' ? 'white' : 'black')}; */
-  color: black;
-  /* margin-right: 6px; */
-  display: inline-block;
-  transform: ${({ ellapsed }) => (ellapsed ? 'rotate(-45deg)' : 'rotate(-90deg)')};
-  transition: transform 200ms cubic-bezier(0.4, 1, 0.75, 0.9);
-
-  ::after {
-    content: '▾';
-  }
-`
-
-const CollapseButtonStyle = styled.button`
-  appearance: none;
-  border: none;
-  background: transparent;
-  padding: 0;
-  z-index: 2;
-  position: absolute;
-  top: 45%;
-  width: 30px;
-  height: 30px;
-  transform: translate3d(-50%, -50%, 0);
-  cursor: pointer;
-
-  &::after {
-    content: '';
-    position: absolute;
-    transform-origin: 7px 4px;
-    transform: translate3d(-50%, -20%, 0);
-    border: solid transparent 10px;
-    border-left-width: 7px;
-    border-right-width: 7px;
-    border-top-color: gray;
-  }
-
-  &:hover::after {
-    border-top-color: black;
-  }
-
-  &:focus {
-    outline: none;
-
-    /* &::after {
-      filter: drop-shadow(0 0 1px #83bef9) drop-shadow(0 0 1px #83bef9) drop-shadow(0 0 1px #83bef9);
-    } */
-  }
-`
-
-const ExpandButtonStyle = styled(CollapseButtonStyle)`
-  &::after {
-    transform: translate3d(-50%, -20%, 0) rotateZ(-90deg);
-  }
-`
-
 const RowStyle = styled.div`
   height: 100%;
   white-space: nowrap;
@@ -245,13 +180,13 @@ const RowWrapperStyle = styled.div`
   box-sizing: border-box;
   cursor: ${({ canDrag }) => (canDrag ? 'move' : 'default')};
 
-  &:hover {
+  /* &:hover {
     opacity: 0.7;
   }
 
   &:active {
     opacity: 1;
-  }
+  } */
 `
 
 const RowItemStyle = styled.div`
@@ -279,6 +214,28 @@ const RowToolbarStyle = styled(RowItemStyle)`
 `
 
 const RowToolbarButtonStyle = styled(RowItemStyle)``
+
+const ButtonStyle = styled.img`
+  -webkit-app-region: no-drag;
+  -webkit-touch-callout: none;
+  user-select: none;
+
+  padding: 0;
+  z-index: 2;
+  position: absolute;
+  cursor: pointer;
+`
+const svgThemedName = (theme, path) => {
+  if (theme.type === 'dark') {
+    return path.substring(0, path.lastIndexOf('.')) + '-dark' + path.substring(path.lastIndexOf('.'))
+  }
+
+  return path
+}
+
+const theme = {
+  type: 'light'
+}
 
 function isDescendant(older, younger) {
   return (
@@ -363,42 +320,28 @@ export default class FileThemeNodeContentRenderer extends Component {
     })
 
     const nodeContent = () => {
-      // let Button = null
-
-      // if (toggleChildrenVisibility && node.children && node.children.length > 0) {
-      //   Button = node.expanded ? CollapseButtonStyle : ExpandButtonStyle
-      // }
-
       const Row = isLandingPadActive ? RowLandigPadStyle : RowStyle
 
       return (
         <div style={styles.root} {...otherProps}>
           {toggleChildrenVisibility && node.children && node.children.length > 0 && (
-            // <Button
-            //   aria-label={node.expanded ? 'Collapse' : 'Expand'}
-            //   style={{
-            //     left: (lowerSiblingCounts.length - 0.7) * scaffoldBlockPxWidth
-            //   }}
-            //   onClick={() =>
-            //     toggleChildrenVisibility({
-            //       node,
-            //       path,
-            //       treeIndex
-            //     })
-            //   }
-            // />
-            <NodeArrowStyle
-              ellapsed={node.expanded}
-              style={{
-                left: (lowerSiblingCounts.length - 0.7) * scaffoldBlockPxWidth
-              }}
-              onClick={() =>
+            <ButtonStyle
+              draggable={false}
+              src={svgThemedName(
+                theme,
+                node.expanded ? './assets/ui/expando_expanded.svg' : './assets/ui/expando_collapsed.svg'
+              )}
+              width={16}
+              height={16}
+              onClick={event => {
+                event.preventDefault()
+                event.stopPropagation()
                 toggleChildrenVisibility({
                   node,
                   path,
                   treeIndex
                 })
-              }
+              }}
             />
           )}
 
@@ -415,15 +358,17 @@ export default class FileThemeNodeContentRenderer extends Component {
                   }}
                 >
                   <RowContentsStyle>
-                    <RowToolbarStyle>
-                      {icons.map((icon, index) => (
-                        <RowToolbarButtonStyle
-                          key={index} // eslint-disable-line react/no-array-index-key
-                        >
-                          {icon}
-                        </RowToolbarButtonStyle>
-                      ))}
-                    </RowToolbarStyle>
+                    {icons && icons.length > 0 && (
+                      <RowToolbarStyle>
+                        {icons.map((icon, index) => (
+                          <RowToolbarButtonStyle
+                            key={index} // eslint-disable-line react/no-array-index-key
+                          >
+                            {icon}
+                          </RowToolbarButtonStyle>
+                        ))}
+                      </RowToolbarStyle>
+                    )}
                     <RowLabelStyle>
                       <span>
                         {typeof nodeTitle === 'function'
@@ -435,17 +380,6 @@ export default class FileThemeNodeContentRenderer extends Component {
                           : nodeTitle}
                       </span>
                     </RowLabelStyle>
-
-                    {/* <div className={styles.rowToolbar}>
-                    {buttons.map((btn, index) => (
-                      <div
-                        key={index} // eslint-disable-line react/no-array-index-key
-                        className={styles.toolbarButton}
-                      >
-                        {btn}
-                      </div>
-                    ))}
-                  </div> */}
                   </RowContentsStyle>
                 </Row>
               </div>
